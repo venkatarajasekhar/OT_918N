@@ -1,12 +1,21 @@
-
-
 #include "qemu-common.h"
 #include "qemu-timer.h"
 #include "bt.h"
 
 #define L2CAP_CID_MAX	0x100	/* Between 0x40 and 0x10000 */
 
-struct l2cap_instance_s {
+static uint8_t *l2cap_bframe_out(struct bt_l2cap_conn_params_s *parm, int len);
+static void l2cap_bframe_submit(struct bt_l2cap_conn_params_s *parms);
+#if 0
+static uint8_t *l2cap_iframe_out(struct bt_l2cap_conn_params_s *parm, int len);
+static void l2cap_iframe_submit(struct bt_l2cap_conn_params_s *parm);
+#endif
+static void l2cap_bframe_in(struct l2cap_chan_s *ch, uint16_t cid,
+                const l2cap_hdr *hdr, int len);
+static void l2cap_iframe_in(struct l2cap_chan_s *ch, uint16_t cid,
+                const l2cap_hdr *hdr, int len);
+
+typedef struct l2cap_instance_s {
     struct bt_link_s *link;
     struct bt_l2cap_device_s *dev;
     int role;
@@ -25,7 +34,7 @@ struct l2cap_instance_s {
     int last_id;
     int next_id;
 
-    struct l2cap_chan_s {
+    typedef struct l2cap_chan_s {
         struct bt_l2cap_conn_params_s params;
 
         void (*frame_in)(struct l2cap_chan_s *chan, uint16_t cid,
@@ -53,7 +62,8 @@ struct l2cap_instance_s {
         int monitor_timeout;
         QEMUTimer *monitor_timer;
         QEMUTimer *retransmission_timer;
-    } *cid[L2CAP_CID_MAX];
+    } l2cap_chan_cid[L2CAP_CID_MAX];
+    
     /* The channel state machine states map as following:
      * CLOSED           -> !cid[N]
      * WAIT_CONNECT     -> never occurs
@@ -70,7 +80,7 @@ struct l2cap_instance_s {
 
     struct l2cap_chan_s signalling_ch;
     struct l2cap_chan_s group_ch;
-};
+}l2cap_instance_t;
 
 struct slave_l2cap_instance_s {
     struct bt_link_s link;	/* Underlying logical link (ACL) */
@@ -165,7 +175,7 @@ static void l2cap_monitor_timer_update(struct l2cap_chan_s *ch)
 #endif
 }
 
-static void l2cap_command_reject(struct l2cap_instance_s *l2cap, int id,
+static void l2cap_command_reject(l2cap_instance_t *l2cap, int id,
                 uint16_t reason, const void *data, int plen)
 {
     uint8_t *pkt;
@@ -191,7 +201,7 @@ static void l2cap_command_reject(struct l2cap_instance_s *l2cap, int id,
     l2cap->signalling_ch.params.sdu_submit(&l2cap->signalling_ch.params);
 }
 
-static void l2cap_command_reject_cid(struct l2cap_instance_s *l2cap, int id,
+static void l2cap_command_reject_cid(l2cap_instance_t *l2cap, int id,
                 uint16_t reason, uint16_t dcid, uint16_t scid)
 {
     l2cap_cmd_rej_cid params = {
@@ -202,7 +212,7 @@ static void l2cap_command_reject_cid(struct l2cap_instance_s *l2cap, int id,
     l2cap_command_reject(l2cap, id, reason, &params, L2CAP_CMD_REJ_CID_SIZE);
 }
 
-static void l2cap_connection_response(struct l2cap_instance_s *l2cap,
+static void l2cap_connection_response(l2cap_instance_t *l2cap,
                 int dcid, int scid, int result, int status)
 {
     uint8_t *pkt;
@@ -226,7 +236,7 @@ static void l2cap_connection_response(struct l2cap_instance_s *l2cap,
     l2cap->signalling_ch.params.sdu_submit(&l2cap->signalling_ch.params);
 }
 
-static void l2cap_configuration_request(struct l2cap_instance_s *l2cap,
+static void l2cap_configuration_request(l2cap_instance_t *l2cap,
                 int dcid, int flag, const uint8_t *data, int len)
 {
     uint8_t *pkt;
@@ -254,7 +264,7 @@ static void l2cap_configuration_request(struct l2cap_instance_s *l2cap,
     l2cap->signalling_ch.params.sdu_submit(&l2cap->signalling_ch.params);
 }
 
-static void l2cap_configuration_response(struct l2cap_instance_s *l2cap,
+static void l2cap_configuration_response(l2cap_instance_t *l2cap,
                 int scid, int flag, int result, const uint8_t *data, int len)
 {
     uint8_t *pkt;
@@ -279,7 +289,7 @@ static void l2cap_configuration_response(struct l2cap_instance_s *l2cap,
     l2cap->signalling_ch.params.sdu_submit(&l2cap->signalling_ch.params);
 }
 
-static void l2cap_disconnection_response(struct l2cap_instance_s *l2cap,
+static void l2cap_disconnection_response(l2cap_instance_t *l2cap,
                 int dcid, int scid)
 {
     uint8_t *pkt;
@@ -301,7 +311,7 @@ static void l2cap_disconnection_response(struct l2cap_instance_s *l2cap,
     l2cap->signalling_ch.params.sdu_submit(&l2cap->signalling_ch.params);
 }
 
-static void l2cap_echo_response(struct l2cap_instance_s *l2cap,
+static void l2cap_echo_response(l2cap_instance_t *l2cap,
                 const uint8_t *data, int len)
 {
     uint8_t *pkt;
@@ -322,7 +332,7 @@ static void l2cap_echo_response(struct l2cap_instance_s *l2cap,
     l2cap->signalling_ch.params.sdu_submit(&l2cap->signalling_ch.params);
 }
 
-static void l2cap_info_response(struct l2cap_instance_s *l2cap, int type,
+static void l2cap_info_response(l2cap_instance_t *l2cap, int type,
                 int result, const uint8_t *data, int len)
 {
     uint8_t *pkt;
@@ -346,18 +356,8 @@ static void l2cap_info_response(struct l2cap_instance_s *l2cap, int type,
     l2cap->signalling_ch.params.sdu_submit(&l2cap->signalling_ch.params);
 }
 
-static uint8_t *l2cap_bframe_out(struct bt_l2cap_conn_params_s *parm, int len);
-static void l2cap_bframe_submit(struct bt_l2cap_conn_params_s *parms);
-#if 0
-static uint8_t *l2cap_iframe_out(struct bt_l2cap_conn_params_s *parm, int len);
-static void l2cap_iframe_submit(struct bt_l2cap_conn_params_s *parm);
-#endif
-static void l2cap_bframe_in(struct l2cap_chan_s *ch, uint16_t cid,
-                const l2cap_hdr *hdr, int len);
-static void l2cap_iframe_in(struct l2cap_chan_s *ch, uint16_t cid,
-                const l2cap_hdr *hdr, int len);
 
-static int l2cap_cid_new(struct l2cap_instance_s *l2cap)
+static int l2cap_cid_new(l2cap_instance_t *l2cap)
 {
     int i;
 
@@ -379,7 +379,7 @@ static inline struct bt_l2cap_psm_s *l2cap_psm(
     return ret;
 }
 
-static struct l2cap_chan_s *l2cap_channel_open(struct l2cap_instance_s *l2cap,
+static struct l2cap_chan_s *l2cap_channel_open(l2cap_instance_t *l2cap,
                 int psm, int source_cid)
 {
     struct l2cap_chan_s *ch = NULL;
@@ -477,7 +477,7 @@ static void l2cap_channel_config_req_event(struct l2cap_instance_s *l2cap,
     l2cap_channel_config_null(l2cap, ch);
 }
 
-static int l2cap_channel_config(struct l2cap_instance_s *l2cap,
+static int l2cap_channel_config(l2cap_instance_t *l2cap,
                 struct l2cap_chan_s *ch, int flag,
                 const uint8_t *data, int len)
 {
