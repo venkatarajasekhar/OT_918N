@@ -1,4 +1,20 @@
-
+#include <stdio.h>
+ 
+#define INFO    1
+#define ERR 2
+#define STD_OUT stdout
+#define STD_ERR stderr
+ 
+#define LOG_MESSAGE(prio, stream, msg, ...) do {\
+                        char *str;\
+                        if (prio == INFO)\
+                            str = "INFO";\
+                        else if (prio == ERR)\
+                            str = "ERR";\
+                        fprintf(stream, "[%s] : %s : %d : "msg" \n", \
+                                str, __FILE__, __LINE__, ##__VA_ARGS__);\
+                    } while (0)
+ 
 
 /* BD Address */
 typedef struct {
