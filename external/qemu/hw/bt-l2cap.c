@@ -168,16 +168,22 @@ static void l2cap_monitor_timer_update(struct l2cap_chan_s *ch)
 static void l2cap_command_reject(struct l2cap_instance_s *l2cap, int id,
                 uint16_t reason, const void *data, int plen)
 {
-    uint8_t *pkt;
-    l2cap_cmd_hdr *hdr;
-    l2cap_cmd_rej *params;
+    uint8_t *pkt = NULL;
+    l2cap_cmd_hdr *hdr = NULL;
+    l2cap_cmd_rej *params = NULL;
     uint16_t len;
 
     reason = cpu_to_le16(reason);
     len = cpu_to_le16(L2CAP_CMD_REJ_SIZE + plen);
-
+   
     pkt = l2cap->signalling_ch.params.sdu_out(&l2cap->signalling_ch.params,
                     L2CAP_CMD_HDR_SIZE + L2CAP_CMD_REJ_SIZE + plen);
+    if(pkt){
+     LOG_MESSAGE(INFO, STD_OUT, "%s : l2cap_command_reject:L2cap_Signalling_Pocket", s);
+    }
+    else{
+    LOG_MESSAGE(ERR, STD_ERR, "Error:l2cap_command_reject:L2cap_Signalling_Pocket");
+    }
     hdr = (void *) (pkt + 0);
     params = (void *) (pkt + L2CAP_CMD_HDR_SIZE);
 
@@ -188,7 +194,12 @@ static void l2cap_command_reject(struct l2cap_instance_s *l2cap, int id,
     if (plen)
        memcpy(pkt + L2CAP_CMD_HDR_SIZE + L2CAP_CMD_REJ_SIZE, data, plen);
 
-    l2cap->signalling_ch.params.sdu_submit(&l2cap->signalling_ch.params);
+    if(l2cap->signalling_ch.params.sdu_submit(&l2cap->signalling_ch.params)){
+        LOG_MESSAGE(INFO, STD_OUT, "%s : l2cap_command_reject:L2cap_Signalling_Pocket", s);
+    }
+    else{
+    LOG_MESSAGE(ERR, STD_ERR, "Error:l2cap_command_reject:L2cap_Signalling_Pocket");
+    }
 }
 
 static void l2cap_command_reject_cid(struct l2cap_instance_s *l2cap, int id,
@@ -211,6 +222,12 @@ static void l2cap_connection_response(struct l2cap_instance_s *l2cap,
 
     pkt = l2cap->signalling_ch.params.sdu_out(&l2cap->signalling_ch.params,
                     L2CAP_CMD_HDR_SIZE + L2CAP_CONN_RSP_SIZE);
+    if(pkt){
+     LOG_MESSAGE(INFO, STD_OUT, "%s : l2cap_connection_response:L2cap_Signalling_Pocket", s);
+    }
+    else{
+    LOG_MESSAGE(ERR, STD_ERR, "Error:l2cap_connection_response:L2cap_Signalling_Pocket");
+    }
     hdr = (void *) (pkt + 0);
     params = (void *) (pkt + L2CAP_CMD_HDR_SIZE);
 
@@ -223,18 +240,29 @@ static void l2cap_connection_response(struct l2cap_instance_s *l2cap,
     params->result = cpu_to_le16(result);
     params->status = cpu_to_le16(status);
 
-    l2cap->signalling_ch.params.sdu_submit(&l2cap->signalling_ch.params);
+    if(l2cap->signalling_ch.params.sdu_submit(&l2cap->signalling_ch.params))
+    LOG_MESSAGE(INFO, STD_OUT, "%s : l2cap_connection_response:L2cap_Signalling_Pocket", s);
+    }
+    else{
+    LOG_MESSAGE(ERR, STD_ERR, "Error:l2cap_connection_response:L2cap_Signalling_Pocket");
+    }
 }
 
 static void l2cap_configuration_request(struct l2cap_instance_s *l2cap,
                 int dcid, int flag, const uint8_t *data, int len)
 {
-    uint8_t *pkt;
-    l2cap_cmd_hdr *hdr;
-    l2cap_conf_req *params;
+    uint8_t *pkt = NULL;
+    l2cap_cmd_hdr *hdr = NULL;
+    l2cap_conf_req *params = NULL;
 
     pkt = l2cap->signalling_ch.params.sdu_out(&l2cap->signalling_ch.params,
                     L2CAP_CMD_HDR_SIZE + L2CAP_CONF_REQ_SIZE(len));
+    if(pkt){
+     LOG_MESSAGE(INFO, STD_OUT, "%s : l2cap_configuration_request:L2cap_Signalling_Pocket", s);
+    }
+    else{
+    LOG_MESSAGE(ERR, STD_ERR, "Error:l2cap_configuration_request:L2cap_Signalling_Pocket");
+    }
     hdr = (void *) (pkt + 0);
     params = (void *) (pkt + L2CAP_CMD_HDR_SIZE);
 
@@ -257,12 +285,18 @@ static void l2cap_configuration_request(struct l2cap_instance_s *l2cap,
 static void l2cap_configuration_response(struct l2cap_instance_s *l2cap,
                 int scid, int flag, int result, const uint8_t *data, int len)
 {
-    uint8_t *pkt;
-    l2cap_cmd_hdr *hdr;
-    l2cap_conf_rsp *params;
+    uint8_t *pkt = NULL;
+    l2cap_cmd_hdr *hdr = NULL;
+    l2cap_conf_rsp *params = NULL;
 
     pkt = l2cap->signalling_ch.params.sdu_out(&l2cap->signalling_ch.params,
                     L2CAP_CMD_HDR_SIZE + L2CAP_CONF_RSP_SIZE(len));
+    if(pkt){
+     LOG_MESSAGE(INFO, STD_OUT, "%s : l2cap_configuration_response:L2cap_Signalling_Pocket", s);
+    }
+    else{
+    LOG_MESSAGE(ERR, STD_ERR, "Error:l2cap_configuration_response:L2cap_Signalling_Pocket");
+    }
     hdr = (void *) (pkt + 0);
     params = (void *) (pkt + L2CAP_CMD_HDR_SIZE);
 
