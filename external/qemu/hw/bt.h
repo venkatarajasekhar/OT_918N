@@ -1,13 +1,152 @@
+#define INFO    1
+#define ERR 2
+#define STD_OUT stdout
+#define STD_ERR stderr
+ 
+#define LOG_MESSAGE(prio, stream, msg, ...) do {\
+                        char *str;\
+                        if (prio == INFO)\
+                            str = "INFO";\
+                        else if (prio == ERR)\
+                            str = "ERR";\
+                        fprintf(stream, "[%s] : %s : %d : "msg" \n", \
+                                str, __FILE__, __LINE__, ##__VA_ARGS__);\
+                    } while (0)
+ /* Link Management Protocol layer defines */
 
+#define LLID_ACLU_CONT		0x1
+#define LLID_ACLU_START		0x2
+#define LLID_ACLC		0x3
+#define BDADDR_ANY	(&(bdaddr_t) {{0, 0, 0, 0, 0, 0}})
+#define BDADDR_ALL	(&(bdaddr_t) {{0xff, 0xff, 0xff, 0xff, 0xff, 0xff}})
+#define BDADDR_LOCAL	(&(bdaddr_t) {{0, 0, 0, 0xff, 0xff, 0xff}})
+/* HCI Commands */
+
+/* Link Control */
+#define OGF_LINK_CTL		0x01
+#define OCF_INQUIRY			0x0001
+#define SDP_SERVER_PROFILE_ID		SDP_SERVER_SVCLASS_ID
+#define BROWSE_GRP_DESC_PROFILE_ID	BROWSE_GRP_DESC_SVCLASS_ID
+#define SERIAL_PORT_PROFILE_ID		SERIAL_PORT_SVCLASS_ID
+#define LAN_ACCESS_PROFILE_ID		LAN_ACCESS_SVCLASS_ID
+#define DIALUP_NET_PROFILE_ID		DIALUP_NET_SVCLASS_ID
+#define IRMC_SYNC_PROFILE_ID		IRMC_SYNC_SVCLASS_ID
+#define OBEX_OBJPUSH_PROFILE_ID		OBEX_OBJPUSH_SVCLASS_ID
+#define OBEX_FILETRANS_PROFILE_ID	OBEX_FILETRANS_SVCLASS_ID
+#define IRMC_SYNC_CMD_PROFILE_ID	IRMC_SYNC_CMD_SVCLASS_ID
+#define HEADSET_PROFILE_ID		HEADSET_SVCLASS_ID
+#define CORDLESS_TELEPHONY_PROFILE_ID	CORDLESS_TELEPHONY_SVCLASS_ID
+#define AUDIO_SOURCE_PROFILE_ID		AUDIO_SOURCE_SVCLASS_ID
+#define AUDIO_SINK_PROFILE_ID		AUDIO_SINK_SVCLASS_ID
+#define AV_REMOTE_TARGET_PROFILE_ID	AV_REMOTE_TARGET_SVCLASS_ID
+#define ADVANCED_AUDIO_PROFILE_ID	ADVANCED_AUDIO_SVCLASS_ID
+#define AV_REMOTE_PROFILE_ID		AV_REMOTE_SVCLASS_ID
+#define VIDEO_CONF_PROFILE_ID		VIDEO_CONF_SVCLASS_ID
+#define INTERCOM_PROFILE_ID		INTERCOM_SVCLASS_ID
+#define FAX_PROFILE_ID			FAX_SVCLASS_ID
+#define HEADSET_AGW_PROFILE_ID		HEADSET_AGW_SVCLASS_ID
+#define WAP_PROFILE_ID			WAP_SVCLASS_ID
+#define WAP_CLIENT_PROFILE_ID		WAP_CLIENT_SVCLASS_ID
+#define PANU_PROFILE_ID			PANU_SVCLASS_ID
+#define NAP_PROFILE_ID			NAP_SVCLASS_ID
+#define GN_PROFILE_ID			GN_SVCLASS_ID
+#define DIRECT_PRINTING_PROFILE_ID	DIRECT_PRINTING_SVCLASS_ID
+#define REFERENCE_PRINTING_PROFILE_ID	REFERENCE_PRINTING_SVCLASS_ID
+#define IMAGING_PROFILE_ID		IMAGING_SVCLASS_ID
+#define IMAGING_RESPONDER_PROFILE_ID	IMAGING_RESPONDER_SVCLASS_ID
+#define IMAGING_ARCHIVE_PROFILE_ID	IMAGING_ARCHIVE_SVCLASS_ID
+#define IMAGING_REFOBJS_PROFILE_ID	IMAGING_REFOBJS_SVCLASS_ID
+#define HANDSFREE_PROFILE_ID		HANDSFREE_SVCLASS_ID
+#define HANDSFREE_AGW_PROFILE_ID	HANDSFREE_AGW_SVCLASS_ID
+#define DIRECT_PRT_REFOBJS_PROFILE_ID	DIRECT_PRT_REFOBJS_SVCLASS_ID
+#define REFLECTED_UI_PROFILE_ID		REFLECTED_UI_SVCLASS_ID
+#define BASIC_PRINTING_PROFILE_ID	BASIC_PRINTING_SVCLASS_ID
+#define PRINTING_STATUS_PROFILE_ID	PRINTING_STATUS_SVCLASS_ID
+#define HID_PROFILE_ID			HID_SVCLASS_ID
+#define HCR_PROFILE_ID			HCR_SCAN_SVCLASS_ID
+#define HCR_PRINT_PROFILE_ID		HCR_PRINT_SVCLASS_ID
+#define HCR_SCAN_PROFILE_ID		HCR_SCAN_SVCLASS_ID
+#define CIP_PROFILE_ID			CIP_SVCLASS_ID
+#define VIDEO_CONF_GW_PROFILE_ID	VIDEO_CONF_GW_SVCLASS_ID
+#define UDI_MT_PROFILE_ID		UDI_MT_SVCLASS_ID
+#define UDI_TA_PROFILE_ID		UDI_TA_SVCLASS_ID
+#define AV_PROFILE_ID			AV_SVCLASS_ID
+#define SAP_PROFILE_ID			SAP_SVCLASS_ID
+#define PBAP_PCE_PROFILE_ID		PBAP_PCE_SVCLASS_ID
+#define PBAP_PSE_PROFILE_ID		PBAP_PSE_SVCLASS_ID
+#define PBAP_PROFILE_ID			PBAP_SVCLASS_ID
+#define PNP_INFO_PROFILE_ID		PNP_INFO_SVCLASS_ID
+#define GENERIC_NETWORKING_PROFILE_ID	GENERIC_NETWORKING_SVCLASS_ID
+#define GENERIC_FILETRANS_PROFILE_ID	GENERIC_FILETRANS_SVCLASS_ID
+#define GENERIC_AUDIO_PROFILE_ID	GENERIC_AUDIO_SVCLASS_ID
+#define GENERIC_TELEPHONY_PROFILE_ID	GENERIC_TELEPHONY_SVCLASS_ID
+#define UPNP_PROFILE_ID			UPNP_SVCLASS_ID
+#define UPNP_IP_PROFILE_ID		UPNP_IP_SVCLASS_ID
+#define UPNP_PAN_PROFILE_ID		UPNP_PAN_SVCLASS_ID
+#define UPNP_LAP_PROFILE_ID		UPNP_LAP_SVCLASS_ID
+#define UPNP_L2CAP_PROFILE_ID		UPNP_L2CAP_SVCLASS_ID
+#define VIDEO_SOURCE_PROFILE_ID		VIDEO_SOURCE_SVCLASS_ID
+#define VIDEO_SINK_PROFILE_ID		VIDEO_SINK_SVCLASS_ID
+#define VIDEO_DISTRIBUTION_PROFILE_ID	VIDEO_DISTRIBUTION_SVCLASS_ID
+#define MDP_PROFILE_ID			MDP_SVCLASS_ID
+#define MDP_SOURCE_PROFILE_ID		MDP_SROUCE_SVCLASS_ID
+#define MDP_SINK_PROFILE_ID		MDP_SINK_SVCLASS_ID
+#define APPLE_AGENT_PROFILE_ID		APPLE_AGENT_SVCLASS_ID
+#define SDP_PRIMARY_LANG_BASE 		0x0100
+#define EVT_NUM_COMP_PKTS_SIZE(num_hndl) (1 + 4 * (num_hndl))
+#define PERIODIC_INQUIRY_CP_SIZE 9
+
+#define OCF_EXIT_PERIODIC_INQUIRY	0x0004
+
+#define OCF_CREATE_CONN			0x0005
+#define STATUS_BDADDR_RP_SIZE 7
+
+#define OCF_INQUIRY_CANCEL		0x0002
+
+#define OCF_PERIODIC_INQUIRY		0x0003
+#define CREATE_CONN_CP_SIZE 13
+
+#define OCF_DISCONNECT			0x0006
+#define DISCONNECT_CP_SIZE 3
+
+#define OCF_ADD_SCO			0x0007
+#define WRITE_LINK_POLICY_RP_SIZE 3
+
+#define OCF_READ_DEFAULT_LINK_POLICY	0x000E
+
+#define OCF_WRITE_DEFAULT_LINK_POLICY	0x000F
+
+#define OCF_FLOW_SPECIFICATION		0x0010
+
+#define OCF_SNIFF_SUBRATE		0x0011
+#define SNIFF_SUBRATE_CP_SIZE 10
+
+/* Host Controller and Baseband */
+#define OGF_HOST_CTL		0x03
+
+#define OCF_SET_EVENT_MASK		0x0001
+#define WRITE_VOICE_SETTING_CP_SIZE 2
+
+#define OCF_READ_AUTOMATIC_FLUSH_TIMEOUT	0x0027
+
+#define OCF_WRITE_AUTOMATIC_FLUSH_TIMEOUT	0x0028
+
+#define OCF_READ_NUM_BROADCAST_RETRANS	0x0029
+
+#define OCF_WRITE_NUM_BROADCAST_RETRANS	0x002A
+
+#define OCF_READ_HOLD_MODE_ACTIVITY	0x002B
+
+#define OCF_WRITE_HOLD_MODE_ACTIVITY	0x002C
+
+#define OCF_READ_TRANSMIT_POWER_LEVEL	0x002D
+#define EVT_MODE_CHANGE			0x14
 
 /* BD Address */
 typedef struct {
     uint8_t b[6];
 } __attribute__((packed)) bdaddr_t;
 
-#define BDADDR_ANY	(&(bdaddr_t) {{0, 0, 0, 0, 0, 0}})
-#define BDADDR_ALL	(&(bdaddr_t) {{0xff, 0xff, 0xff, 0xff, 0xff, 0xff}})
-#define BDADDR_LOCAL	(&(bdaddr_t) {{0, 0, 0, 0xff, 0xff, 0xff}})
 
 /* Copy, swap, convert BD Address */
 static inline int bacmp(const bdaddr_t *ba1, const bdaddr_t *ba2)
@@ -80,15 +219,6 @@ struct bt_device_s {
     uint16_t clkoff;	/* Note: Always little-endian */
 };
 
-/* bt.c */
-void bt_device_init(struct bt_device_s *dev, struct bt_scatternet_s *net);
-void bt_device_done(struct bt_device_s *dev);
-
-/* bt-hci.c */
-struct HCIInfo *bt_new_hci(struct bt_scatternet_s *net);
-
-/* bt-vhci.c */
-void bt_vhci_init(struct HCIInfo *info);
 
 /* bt-hci-csr.c */
 enum {
@@ -138,21 +268,6 @@ enum bt_l2cap_psm_predef {
     BT_PSM_AVCTP	= 0x0017,
     BT_PSM_AVDTP	= 0x0019,
 };
-
-/* bt-sdp.c */
-void bt_l2cap_sdp_init(struct bt_l2cap_device_s *dev);
-
-/* bt-hid.c */
-struct bt_device_s *bt_mouse_init(struct bt_scatternet_s *net);
-struct bt_device_s *bt_tablet_init(struct bt_scatternet_s *net);
-struct bt_device_s *bt_keyboard_init(struct bt_scatternet_s *net);
-
-/* Link Management Protocol layer defines */
-
-#define LLID_ACLU_CONT		0x1
-#define LLID_ACLU_START		0x2
-#define LLID_ACLC		0x3
-
 enum lmp_pdu_type {
     LMP_NAME_REQ		= 0x0001,
     LMP_NAME_RES		= 0x0002,
@@ -413,12 +528,7 @@ enum hci_link_mode {
     HCI_LM_SECURE	= 1 << 5,
 };
 
-/* HCI Commands */
 
-/* Link Control */
-#define OGF_LINK_CTL		0x01
-
-#define OCF_INQUIRY			0x0001
 typedef struct {
     uint8_t	lap[3];
     uint8_t	length;		/* 1.28s units */
@@ -430,11 +540,7 @@ typedef struct {
     uint8_t		status;
     bdaddr_t	bdaddr;
 } __attribute__ ((packed)) status_bdaddr_rp;
-#define STATUS_BDADDR_RP_SIZE 7
 
-#define OCF_INQUIRY_CANCEL		0x0002
-
-#define OCF_PERIODIC_INQUIRY		0x0003
 typedef struct {
     uint16_t	max_period;	/* 1.28s units */
     uint16_t	min_period;	/* 1.28s units */
@@ -442,11 +548,7 @@ typedef struct {
     uint8_t	length;		/* 1.28s units */
     uint8_t	num_rsp;
 } __attribute__ ((packed)) periodic_inquiry_cp;
-#define PERIODIC_INQUIRY_CP_SIZE 9
 
-#define OCF_EXIT_PERIODIC_INQUIRY	0x0004
-
-#define OCF_CREATE_CONN			0x0005
 typedef struct {
     bdaddr_t	bdaddr;
     uint16_t	pkt_type;
@@ -455,16 +557,12 @@ typedef struct {
     uint16_t	clock_offset;
     uint8_t	role_switch;
 } __attribute__ ((packed)) create_conn_cp;
-#define CREATE_CONN_CP_SIZE 13
 
-#define OCF_DISCONNECT			0x0006
 typedef struct {
     uint16_t	handle;
     uint8_t	reason;
 } __attribute__ ((packed)) disconnect_cp;
-#define DISCONNECT_CP_SIZE 3
 
-#define OCF_ADD_SCO			0x0007
 typedef struct {
     uint16_t	handle;
     uint16_t	pkt_type;
@@ -738,15 +836,7 @@ typedef struct {
     uint8_t 	status;
     uint16_t	handle;
 } __attribute__ ((packed)) write_link_policy_rp;
-#define WRITE_LINK_POLICY_RP_SIZE 3
 
-#define OCF_READ_DEFAULT_LINK_POLICY	0x000E
-
-#define OCF_WRITE_DEFAULT_LINK_POLICY	0x000F
-
-#define OCF_FLOW_SPECIFICATION		0x0010
-
-#define OCF_SNIFF_SUBRATE		0x0011
 typedef struct {
     uint16_t	handle;
     uint16_t	max_remote_latency;
@@ -754,12 +844,7 @@ typedef struct {
     uint16_t	min_remote_timeout;
     uint16_t	min_local_timeout;
 } __attribute__ ((packed)) sniff_subrate_cp;
-#define SNIFF_SUBRATE_CP_SIZE 10
 
-/* Host Controller and Baseband */
-#define OGF_HOST_CTL		0x03
-
-#define OCF_SET_EVENT_MASK		0x0001
 typedef struct {
     uint8_t	mask[8];
 } __attribute__ ((packed)) set_event_mask_cp;
@@ -986,21 +1071,7 @@ typedef struct {
 typedef struct {
     uint16_t	voice_setting;
 } __attribute__ ((packed)) write_voice_setting_cp;
-#define WRITE_VOICE_SETTING_CP_SIZE 2
 
-#define OCF_READ_AUTOMATIC_FLUSH_TIMEOUT	0x0027
-
-#define OCF_WRITE_AUTOMATIC_FLUSH_TIMEOUT	0x0028
-
-#define OCF_READ_NUM_BROADCAST_RETRANS	0x0029
-
-#define OCF_WRITE_NUM_BROADCAST_RETRANS	0x002A
-
-#define OCF_READ_HOLD_MODE_ACTIVITY	0x002B
-
-#define OCF_WRITE_HOLD_MODE_ACTIVITY	0x002C
-
-#define OCF_READ_TRANSMIT_POWER_LEVEL	0x002D
 typedef struct {
     uint16_t	handle;
     uint8_t	type;
@@ -1437,9 +1508,7 @@ typedef struct {
         uint16_t num_packets;
     } connection[0];
 } __attribute__ ((packed)) evt_num_comp_pkts;
-#define EVT_NUM_COMP_PKTS_SIZE(num_hndl) (1 + 4 * (num_hndl))
 
-#define EVT_MODE_CHANGE			0x14
 typedef struct {
     uint8_t	status;
     uint16_t	handle;
@@ -1952,73 +2021,7 @@ enum service_class_id {
     APPLE_AGENT_SVCLASS_ID		= 0x2112,
 };
 
-#define SDP_SERVER_PROFILE_ID		SDP_SERVER_SVCLASS_ID
-#define BROWSE_GRP_DESC_PROFILE_ID	BROWSE_GRP_DESC_SVCLASS_ID
-#define SERIAL_PORT_PROFILE_ID		SERIAL_PORT_SVCLASS_ID
-#define LAN_ACCESS_PROFILE_ID		LAN_ACCESS_SVCLASS_ID
-#define DIALUP_NET_PROFILE_ID		DIALUP_NET_SVCLASS_ID
-#define IRMC_SYNC_PROFILE_ID		IRMC_SYNC_SVCLASS_ID
-#define OBEX_OBJPUSH_PROFILE_ID		OBEX_OBJPUSH_SVCLASS_ID
-#define OBEX_FILETRANS_PROFILE_ID	OBEX_FILETRANS_SVCLASS_ID
-#define IRMC_SYNC_CMD_PROFILE_ID	IRMC_SYNC_CMD_SVCLASS_ID
-#define HEADSET_PROFILE_ID		HEADSET_SVCLASS_ID
-#define CORDLESS_TELEPHONY_PROFILE_ID	CORDLESS_TELEPHONY_SVCLASS_ID
-#define AUDIO_SOURCE_PROFILE_ID		AUDIO_SOURCE_SVCLASS_ID
-#define AUDIO_SINK_PROFILE_ID		AUDIO_SINK_SVCLASS_ID
-#define AV_REMOTE_TARGET_PROFILE_ID	AV_REMOTE_TARGET_SVCLASS_ID
-#define ADVANCED_AUDIO_PROFILE_ID	ADVANCED_AUDIO_SVCLASS_ID
-#define AV_REMOTE_PROFILE_ID		AV_REMOTE_SVCLASS_ID
-#define VIDEO_CONF_PROFILE_ID		VIDEO_CONF_SVCLASS_ID
-#define INTERCOM_PROFILE_ID		INTERCOM_SVCLASS_ID
-#define FAX_PROFILE_ID			FAX_SVCLASS_ID
-#define HEADSET_AGW_PROFILE_ID		HEADSET_AGW_SVCLASS_ID
-#define WAP_PROFILE_ID			WAP_SVCLASS_ID
-#define WAP_CLIENT_PROFILE_ID		WAP_CLIENT_SVCLASS_ID
-#define PANU_PROFILE_ID			PANU_SVCLASS_ID
-#define NAP_PROFILE_ID			NAP_SVCLASS_ID
-#define GN_PROFILE_ID			GN_SVCLASS_ID
-#define DIRECT_PRINTING_PROFILE_ID	DIRECT_PRINTING_SVCLASS_ID
-#define REFERENCE_PRINTING_PROFILE_ID	REFERENCE_PRINTING_SVCLASS_ID
-#define IMAGING_PROFILE_ID		IMAGING_SVCLASS_ID
-#define IMAGING_RESPONDER_PROFILE_ID	IMAGING_RESPONDER_SVCLASS_ID
-#define IMAGING_ARCHIVE_PROFILE_ID	IMAGING_ARCHIVE_SVCLASS_ID
-#define IMAGING_REFOBJS_PROFILE_ID	IMAGING_REFOBJS_SVCLASS_ID
-#define HANDSFREE_PROFILE_ID		HANDSFREE_SVCLASS_ID
-#define HANDSFREE_AGW_PROFILE_ID	HANDSFREE_AGW_SVCLASS_ID
-#define DIRECT_PRT_REFOBJS_PROFILE_ID	DIRECT_PRT_REFOBJS_SVCLASS_ID
-#define REFLECTED_UI_PROFILE_ID		REFLECTED_UI_SVCLASS_ID
-#define BASIC_PRINTING_PROFILE_ID	BASIC_PRINTING_SVCLASS_ID
-#define PRINTING_STATUS_PROFILE_ID	PRINTING_STATUS_SVCLASS_ID
-#define HID_PROFILE_ID			HID_SVCLASS_ID
-#define HCR_PROFILE_ID			HCR_SCAN_SVCLASS_ID
-#define HCR_PRINT_PROFILE_ID		HCR_PRINT_SVCLASS_ID
-#define HCR_SCAN_PROFILE_ID		HCR_SCAN_SVCLASS_ID
-#define CIP_PROFILE_ID			CIP_SVCLASS_ID
-#define VIDEO_CONF_GW_PROFILE_ID	VIDEO_CONF_GW_SVCLASS_ID
-#define UDI_MT_PROFILE_ID		UDI_MT_SVCLASS_ID
-#define UDI_TA_PROFILE_ID		UDI_TA_SVCLASS_ID
-#define AV_PROFILE_ID			AV_SVCLASS_ID
-#define SAP_PROFILE_ID			SAP_SVCLASS_ID
-#define PBAP_PCE_PROFILE_ID		PBAP_PCE_SVCLASS_ID
-#define PBAP_PSE_PROFILE_ID		PBAP_PSE_SVCLASS_ID
-#define PBAP_PROFILE_ID			PBAP_SVCLASS_ID
-#define PNP_INFO_PROFILE_ID		PNP_INFO_SVCLASS_ID
-#define GENERIC_NETWORKING_PROFILE_ID	GENERIC_NETWORKING_SVCLASS_ID
-#define GENERIC_FILETRANS_PROFILE_ID	GENERIC_FILETRANS_SVCLASS_ID
-#define GENERIC_AUDIO_PROFILE_ID	GENERIC_AUDIO_SVCLASS_ID
-#define GENERIC_TELEPHONY_PROFILE_ID	GENERIC_TELEPHONY_SVCLASS_ID
-#define UPNP_PROFILE_ID			UPNP_SVCLASS_ID
-#define UPNP_IP_PROFILE_ID		UPNP_IP_SVCLASS_ID
-#define UPNP_PAN_PROFILE_ID		UPNP_PAN_SVCLASS_ID
-#define UPNP_LAP_PROFILE_ID		UPNP_LAP_SVCLASS_ID
-#define UPNP_L2CAP_PROFILE_ID		UPNP_L2CAP_SVCLASS_ID
-#define VIDEO_SOURCE_PROFILE_ID		VIDEO_SOURCE_SVCLASS_ID
-#define VIDEO_SINK_PROFILE_ID		VIDEO_SINK_SVCLASS_ID
-#define VIDEO_DISTRIBUTION_PROFILE_ID	VIDEO_DISTRIBUTION_SVCLASS_ID
-#define MDP_PROFILE_ID			MDP_SVCLASS_ID
-#define MDP_SOURCE_PROFILE_ID		MDP_SROUCE_SVCLASS_ID
-#define MDP_SINK_PROFILE_ID		MDP_SINK_SVCLASS_ID
-#define APPLE_AGENT_PROFILE_ID		APPLE_AGENT_SVCLASS_ID
+
 
 /* Data Representation */
 enum bt_sdp_data_type {
@@ -2063,7 +2066,6 @@ enum bt_sdp_errorcode {
     SDP_INVALID_CSTATE		= 0x0005,
 };
 
-#define SDP_PRIMARY_LANG_BASE 		0x0100
 
 enum bt_sdp_attribute_id {
     SDP_ATTR_RECORD_HANDLE			= 0x0000,
@@ -2141,3 +2143,29 @@ enum bt_sdp_attribute_id {
     SDP_ATTR_NORMALLY_CONNECTABLE		= 0x020d,
     SDP_ATTR_BOOT_DEVICE			= 0x020e,
 };
+/* bt-sdp.c */
+void bt_l2cap_sdp_init(struct bt_l2cap_device_s *dev);
+
+/* bt-hid.c */
+struct bt_device_s *bt_mouse_init(struct bt_scatternet_s *mouseinit);
+struct bt_device_s *bt_tablet_init(struct bt_scatternet_s *tabletinit);
+struct bt_device_s *bt_keyboard_init(struct bt_scatternet_s *keyboardinit);
+/* bt.c */
+void bt_device_init(struct bt_device_s *dev, struct bt_scatternet_s *net);
+void bt_device_done(struct bt_device_s *dev);
+
+/* bt-hci.c */
+struct HCIInfo *bt_new_hci(struct bt_scatternet_s *net);
+
+/* bt-vhci.c */
+void bt_vhci_init(struct HCIInfo *info);
+
+
+
+
+
+
+
+
+
+
